@@ -1,0 +1,14 @@
+---
+todo:
+  request1:
+    url: https://github.com/
+    params:
+      a: 100
+  request2:
+    url: https://github.com/
+    params:
+      c: 200
+  response:
+    skip_headers:
+      - Accept-Encoding
+ 
