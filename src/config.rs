@@ -1,12 +1,31 @@
-use http::{HeaderMap, Method, Uri};
+use anyhow::{Result, Ok};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
+use std::collections::HashMap;
+use tokio::fs;
+
+
+use crate::{ExtraArgs, req::RequestProfile};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DiffConfig {
     #[serde(flatten)]
     pub profiles: HashMap<String, DiffProfile>,
 }
+
+impl DiffConfig {
+    pub fn from_yaml(content: &str) -> Result<Self> {
+        Ok(serde_yaml::from_str(content)?)
+    }
+    pub async fn load_yaml(path: &str) -> Result<Self> {
+        let content = fs::read_to_string(path).await?;
+        Self::from_yaml(&content)
+    }
+    pub fn get_profile(&self,name:&String) -> Option<&DiffProfile>{
+        self.profiles.get(name) 
+    }
+}
+
+
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DiffProfile {
@@ -15,29 +34,19 @@ pub struct DiffProfile {
     pub res: ResponseProfile,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct RequestProfile {
-    #[serde(with = "http_serde::method", default)]
-    pub method: Method,
 
-    #[serde(with = "http_serde::uri")]
-    pub uri: Uri,
+impl DiffProfile {
+    pub async fn diff(&self,_args:&ExtraArgs) -> Result<()>{
 
-    #[serde(skip_serializing_if = "Option::is_none", default)]
-    pub params: Option<serde_json::Value>,
-
-    #[serde(
-        skip_serializing_if = "HeaderMap::is_empty",
-        with = "http_serde::header_map"
-    )]
-    pub headers: HeaderMap,
-    
-    #[serde(skip_serializing_if = "Option::is_none", default)]
-    pub body: Option<serde_json::Value>,
+        todo!()
+    }
 }
+
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ResponseProfile {
+    #[serde(skip_serializing_if = "Vec::is_empty", default)]
     pub skip_headers: Vec<String>,
+    #[serde(skip_serializing_if = "Vec::is_empty", default)]
     pub skip_body: Vec<String>,
 }

@@ -1,14 +1,26 @@
 ---
 todo:
-  request1:
+  req1:
     url: https://github.com/
     params:
       a: 100
-  request2:
+  req2:
     url: https://github.com/
     params:
       c: 200
-  response:
+  res:
+    skip_headers:
+      - Accept-Encoding
+todo2:
+  req1:
+    url: https://github.com/
+    params:
+      a: 100
+  req2:
+    url: https://github.com/
+    params:
+      c: 200
+  res:
     skip_headers:
       - Accept-Encoding
  
